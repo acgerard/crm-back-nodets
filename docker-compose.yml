@@ -1,0 +1,14 @@
+version: '3'
+services:
+  db:
+    image: postgres:9.2.24
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: pnaz7941_crm
+      POSTGRES_USER: pnaz7941_crm_admin
+      POSTGRES_PASSWORD: password
+      #volumes:
+#      - "crmdata:/var/lib/postgresql/data"
+#volumes:
+#  crmdata:
