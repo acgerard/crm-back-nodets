@@ -26,7 +26,8 @@ jobs:
       - name: Setup Node ${{ matrix.node_version }}
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
+          cache: 'npm'
           
       - name: NPM version
         run: npm --version
