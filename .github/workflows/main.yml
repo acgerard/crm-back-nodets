@@ -31,6 +31,9 @@ jobs:
       # Build
       - name: Install & Build
         run: npm install && npm build
+        
+      - name: Test secrets
+        run: echo "My secret is ${{ secrets.FOO }}"
 
       - name: Deploy to O2Switch
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
