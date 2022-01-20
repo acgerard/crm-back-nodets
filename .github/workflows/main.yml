@@ -27,14 +27,14 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14'
+          
+      - name: NPM version
+        run: npm --version
 
       # Build
       - name: Install & Build
-        run: npm install && npm build
+        run: npm install && npm run build
         
-      - name: Test secrets
-        run: echo "My secret is ${{ secrets.FOO }}"
-
       - name: Deploy to O2Switch
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
@@ -43,6 +43,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           local-dir: ./build/
-          server-dir: ./crm/back
+          server-dir: ./crm/back/
           log-level: standard
           dry-run: false
