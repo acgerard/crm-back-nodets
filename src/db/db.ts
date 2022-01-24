@@ -1,15 +1,6 @@
 import {Pool, PoolClient} from 'pg'
 
-export const pool = new Pool(
-    // {
-    //     user: 'pnaz7941_crm_admin',
-    //     host: 'localhost',
-    //     database: 'pnaz7941_crm',
-    //     // password: 'roar4a7ihs#gjXa4',
-    //     password: 'password',
-    //     port: 5432,
-    // }
-)
+export const pool = new Pool()
 
 pool.on('error', (err, client) => {
     console.error('Error:', err)

@@ -1,0 +1,7 @@
+{
+ "env" : {
+   "PGDATABASE": "crm",
+   "PGPASSWORD": "password",
+   "PGUSER": "crm_admin"
+ }
+}
