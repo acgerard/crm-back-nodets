@@ -34,7 +34,7 @@ export async function del(req: Request, res: Response, next: NextFunction) {
 
 export async function update(req: Request, res: Response, next: NextFunction) {
     await execute(next, async () => {
-        const client = {data: req.body, id: parseInt(req.params.id)};
+        const client = {data: req.body.data, id: parseInt(req.params.id)};
         await updateClient(client)
         res.send(client)
     })
