@@ -34,7 +34,7 @@ export async function del(req: Request, res: Response, next: NextFunction) {
 
 export async function update(req: Request, res: Response, next: NextFunction) {
     await execute(next, async () => {
-        const product = {data: req.body.data, name: req.body.name, code: req.params.id};
+        const product = {data: req.body.data, name: req.body.name, code: req.params.code};
         await updateProduct(product)
         res.send(product)
     })
