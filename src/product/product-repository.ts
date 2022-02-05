@@ -36,7 +36,7 @@ export async function deleteProduct(code: string) {
 }
 
 export async function updateProduct(product: Product) {
-    const res = await query('UPDATE crm.code SET name=$2, data=$3 WHERE code=$1', [product.code, product.name, product.data])
+    const res = await query('UPDATE crm.products SET name=$2, data=$3 WHERE code=$1', [product.code, product.name, product.data])
     if (res.rowCount > 0) {
         return res.rows[0]
     } else {
