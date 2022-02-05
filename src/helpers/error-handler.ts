@@ -8,7 +8,7 @@ export function errorHandler(err: any, req: any, res: any, next: any) {
         res.status(404).send({message: err.message})
     } else {
         console.error(err.stack);
-        res.status(500).send('Erf, something broke :/');
+        res.status(500).send(err.message);
     }
 }
 
