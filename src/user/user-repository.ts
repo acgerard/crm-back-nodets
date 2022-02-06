@@ -3,7 +3,7 @@ import {NotFound} from "../helpers/error-handler";
 import crypto from 'crypto'
 
 
-const secret = '9f4f7118-197c-4816-962b-8eaa237df6ec'
+const secret = process.env.SECRET_PWD || '9f4f7118-197c-4816-962b-8eaa237df6ec'
 
 export async function isUser(login: string) {
     // query the DB
@@ -17,10 +17,10 @@ export async function getUser(login: string, password: string) {
     const hashedPwd = getHashedPwd(password)
 
     // query the DB
-    const res = await query('SELECT email FROM crm.users WHERE email=$1 and password=$2', [login, hashedPwd])
+    const res = await query('SELECT email, name FROM crm.users WHERE email=$1 and password=$2', [login, hashedPwd])
 
     if (res.rowCount > 0) {
-        return res.rows[0].email
+        return res.rows[0]
     } else {
         throw new NotFound('user', login)
     }
@@ -45,10 +45,10 @@ export async function resetPassword(login: string) {
     }
 }
 
-export async function createUser(login: string, password?: string) {
+export async function createUser(login: string, name: string, password?: string) {
     const pwd = password || randomPassword(12)
     const hashedPwd = getHashedPwd(pwd)
-    const res = await query('INSERT INTO crm.users (email, password) VALUES ($1,$2)', [login, hashedPwd])
+    const res = await query('INSERT INTO crm.users (email, name, password) VALUES ($1,$2, $3)', [login, name, hashedPwd])
     if (res.rowCount <= 0) {
         throw Error('Error creating user ' + login)
     } else {

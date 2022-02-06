@@ -2,14 +2,13 @@ import {query} from "../db/db";
 import {NotFound} from "../helpers/error-handler";
 
 export type Product = {
-    code: string,
-    name: string,
+    id: number,
     data: any
 }
 
 
 export async function createProduct(product: Product) {
-    const res = await query('INSERT INTO crm.products (code, name, data) VALUES ($1, $2, $3) RETURNING code, name, data', [product.code, product.name, product.data])
+    const res = await query('INSERT INTO crm.products (data) VALUES ($1) RETURNING id, data', [product])
     if (res.rowCount > 0) {
         return res.rows[0]
     } else {
@@ -18,28 +17,28 @@ export async function createProduct(product: Product) {
 }
 
 export async function getProducts() {
-    const res = await query('SELECT code, name, data FROM crm.products', [])
+    const res = await query('SELECT id, data FROM crm.products', [])
     return res.rows
 }
 
-export async function getProduct(code: string) {
-    const res = await query('SELECT code, name, data FROM crm.products WHERE code = $1', [code])
+export async function getProduct(id: string) {
+    const res = await query('SELECT id, data FROM crm.products WHERE id = $1', [id])
     if (res.rowCount > 0) {
         return res.rows[0]
     } else {
-        throw new NotFound('product', code)
+        throw new NotFound('product', id)
     }
 }
 
-export async function deleteProduct(code: string) {
-    return await query('DELETE FROM crm.products WHERE code = $1', [code])
+export async function deleteProduct(id: string) {
+    return await query('DELETE FROM crm.products WHERE id = $1', [id])
 }
 
 export async function updateProduct(product: Product) {
-    const res = await query('UPDATE crm.products SET name=$2, data=$3 WHERE code=$1', [product.code, product.name, product.data])
+    const res = await query('UPDATE crm.products SET data=$2 WHERE id=$1', [product.id, product.data])
     if (res.rowCount > 0) {
         return res.rows[0]
     } else {
-        throw new NotFound('product', product.code)
+        throw new NotFound('product', product.id.toString())
     }
 }

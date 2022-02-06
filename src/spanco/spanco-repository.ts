@@ -2,44 +2,86 @@ import {query} from "../db/db";
 import {NotFound} from "../helpers/error-handler";
 
 export type Spanco = {
-    productCode: string,
-    promo: string,
-    clients: any
+    id: number,
+    product_id: number,
+    data: any
+}
+export type SpancoOffer = {
+    id: number,
+    spanco_id: number,
+    data: any
 }
 
 
-export async function createSpanco(spanco: Spanco) {
-    const res = await query('INSERT INTO crm.spancos (product_code, promo, clients) VALUES ($1, $2, $3) RETURNING code, name, data', [spanco.productCode, spanco.promo, spanco.clients])
+export async function createSpanco(productId: number, data: any) {
+    const res = await query('INSERT INTO crm.spancos (product_id, data) VALUES ($1, $2) RETURNING id, product_id, data', [productId, data])
     if (res.rowCount > 0) {
         return res.rows[0]
     } else {
         throw Error('Error creating spanco')
     }
 }
-
-export async function getSpancos() {
-    const res = await query('SELECT product_code, promo, clients FROM crm.spancos', [])
-    return res.rows
-}
-
-export async function getSpanco(productCode: string, promo: string) {
-    const res = await query('SELECT product_code, promo, clients FROM crm.spancos WHERE product_code = $1 and promo=$2', [productCode, promo])
+export async function createSpancoOffer(spancoId: number, data: any) {
+    const res = await query('INSERT INTO crm.offers (spanco_id, data) VALUES ($1, $2) RETURNING id, spanco_id, data', [spancoId, data])
     if (res.rowCount > 0) {
         return res.rows[0]
     } else {
-        throw new NotFound('spanco', `${productCode}-${promo}`)
+        throw Error('Error creating spanco offer')
     }
 }
 
-export async function deleteSpanco(productCode: string, promo: string) {
-    return await query('DELETE FROM crm.spancos WHERE product_code = $1 and promo=$2', [productCode, promo])
+export async function getSpancos(): Promise<{id: number; product_id: number; data: any; nb_offers: number}[]> {
+    const res = await query('SELECT s.id, s.product_id , s.data, count(o.id) as nb_offers FROM crm.spancos s left join crm.offers o on o.spanco_id = s.id GROUP BY (s.id, s.product_id) ', [])
+    return res.rows
 }
 
-export async function updateSpanco(spanco: Spanco) {
-    const res = await query('UPDATE crm.code SET clients=$3 WHERE product_code = $1 and promo=$2', [spanco.productCode, spanco.promo, spanco.clients])
+export async function getSpanco(id: string) {
+    const res = await query('SELECT id, product_id, data FROM crm.spancos WHERE id=$1', [id])
     if (res.rowCount > 0) {
         return res.rows[0]
     } else {
-        throw new NotFound('spanco', `${spanco.productCode}-${spanco.promo}`)
+        throw new NotFound('spanco', id)
+    }
+}
+
+export async function getSpancoOffers(spancoId: string) {
+    const res = await query('SELECT id, spanco_id, data FROM crm.offers WHERE spanco_id=$1', [spancoId])
+    return res.rows
+}
+export async function getSpancoOffer(spancoId: string, id: string) {
+    const res = await query('SELECT id, spanco_id, data FROM crm.offers WHERE spanco_id=$1 and id=$2', [spancoId, id])
+    if (res.rowCount > 0) {
+        return res.rows[0]
+    } else {
+        throw new NotFound('offers', id)
+    }
+}
+
+export async function deleteSpanco(id: string) {
+    // delete offers first
+    await query('DELETE FROM crm.offers WHERE spanco_id = $1', [id])
+    // then spanco
+    return await query('DELETE FROM crm.spancos WHERE id = $1', [id])
+}
+
+export async function deleteSpancoOffer(id: string) {
+    return await query('DELETE FROM crm.offers WHERE id = $1', [id])
+}
+
+export async function updateSpanco(spanco: Spanco) {
+    const res = await query('UPDATE crm.spancos SET data=$2 WHERE id = $1', [spanco.id, spanco.data])
+    if (res.rowCount > 0) {
+        return res.rows[0]
+    } else {
+        throw new NotFound('offer', spanco.id.toString())
+    }
+}
+
+export async function updateSpancoOffer(offer: SpancoOffer) {
+    const res = await query('UPDATE crm.offers SET data=$2 WHERE id = $1', [offer.id, offer.data])
+    if (res.rowCount > 0) {
+        return res.rows[0]
+    } else {
+        throw new NotFound('offer', offer.id.toString())
     }
 }

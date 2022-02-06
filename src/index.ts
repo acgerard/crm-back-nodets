@@ -1,4 +1,4 @@
-import express, {Application, NextFunction, Request, Response} from 'express'
+import express, {Application, Request, Response} from 'express'
 import cors from 'cors'
 import {closeDB, initDB} from "./db/db";
 import {errorHandler} from "./helpers/error-handler";
@@ -19,10 +19,15 @@ import {
 } from "./product/product-controller";
 import {
     create as createSpanco,
+    createOffer,
     del as deleteSpanco,
+    delOffer,
     get as getSpanco,
     getAll as getSpancos,
-    update as updateSpanco
+    getAllOffers,
+    getOffer,
+    update as updateSpanco,
+    updateOffer
 } from "./spanco/spanco-controller";
 import {authenticate, create, resetPassword, update} from "./user/user-controller";
 import {createUser, isUser} from "./user/user-repository";
@@ -32,7 +37,6 @@ app.use(express.json())
 app.use(cors());
 const port: number = 8042
 
-// TODO https ??
 // use basic HTTP auth to secure the api
 app.use(basicAuth);
 
@@ -62,10 +66,15 @@ app.delete('/crm/products/:id', deleteProduct)
 
 // routes SPANCO
 app.post('/crm/spancos', createSpanco)
+app.post('/crm/spancos/:spancoId/offers', createOffer)
 app.get('/crm/spancos', getSpancos)
-app.get('/crm/spancos/:productCode/:promo', getSpanco)
-app.put('/crm/spancos/:productCode/:promo', updateSpanco)
-app.delete('/crm/spancos/:productCode/:promo', deleteSpanco)
+app.get('/crm/spancos/:spancoId', getSpanco)
+app.get('/crm/spancos/:spancoId/offers', getAllOffers)
+app.get('/crm/spancos/:spancoId/offers/:offerId', getOffer)
+app.put('/crm/spancos/:spancoId', updateSpanco)
+app.put('/crm/spancos/:spancoId/offers/:id', updateOffer)
+app.delete('/crm/spancos/:spancoId', deleteSpanco)
+app.delete('/crm/spancos/:spancoId/offers/:offerId', delOffer)
 
 
 const adminLogin = 'admin@dtcf.com'
@@ -77,7 +86,7 @@ const server = app.listen(port, async function () {
         console.log("Checking admin user...")
 
         if(!await isUser(adminLogin)) {
-            await createUser(adminLogin, 'changeit')
+            await createUser(adminLogin, 'admin', 'changeit')
             console.log(adminLogin + " user created")
         }
     } catch (e) {
