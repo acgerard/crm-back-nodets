@@ -31,7 +31,7 @@ export async function createSpancoOffer(spancoId: number, data: any) {
 }
 
 export async function getSpancos(): Promise<{id: number; product_id: number; data: any; nb_offers: number}[]> {
-    const res = await query('SELECT s.id, s.product_id , s.data, count(o.id) as nb_offers FROM crm.spancos s left join crm.offers o on o.spanco_id = s.id GROUP BY (s.id, s.product_id) ', [])
+    const res = await query('SELECT s.id, s.product_id , s.data, count(o.id) as nb_offers FROM crm.spancos s left join crm.offers o on o.spanco_id = s.id GROUP BY s.id ', [])
     return res.rows
 }
 
