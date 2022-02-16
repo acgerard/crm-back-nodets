@@ -64,7 +64,7 @@ export async function del(req: Request, res: Response, next: NextFunction) {
 
 export async function delOffer(req: Request, res: Response, next: NextFunction) {
     await execute(next, async () => {
-        await deleteSpancoOffer(req.params.id)
+        await deleteSpancoOffer(req.params.offerId)
         res.send()
     })
 }
