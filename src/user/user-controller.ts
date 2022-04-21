@@ -21,7 +21,7 @@ export async function update(req: Request, res: Response, next: NextFunction) {
 
 export async function create(req: Request, res: Response, next: NextFunction) {
     await execute(next, async () => {
-        const result = await createUser(req.body.email, req.body.password)
+        const result = await createUser(req.body.email, req.body.name, req.body.password)
         res.send(result)
     })
 }
