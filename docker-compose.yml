@@ -1,14 +1,11 @@
 version: '3'
 services:
   db:
-    image: postgres
+    image: mysql
     ports:
-      - "5432:5432"
+      - "3308:3306"
     environment:
-      POSTGRES_DB: crm
-      POSTGRES_USER: crm_admin
-      POSTGRES_PASSWORD: password
-      #volumes:
-#      - "crmdata:/var/lib/postgresql/data"
-#volumes:
-#  crmdata:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: crm
+      MYSQL_USER: crm_admin
+      MYSQL_PASSWORD: password

@@ -1,6 +1,6 @@
 import express, {Application, Request, Response} from 'express'
 import cors from 'cors'
-import {closeDB, initDB} from "./db/db";
+import {closeDB, initDB} from "./db/mysql-db";
 import {errorHandler} from "./helpers/error-handler";
 import {basicAuth} from './helpers/basic-auth';
 import {
