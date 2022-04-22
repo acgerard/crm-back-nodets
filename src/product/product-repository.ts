@@ -17,13 +17,14 @@ export async function createProduct(product: Product): Promise<Product> {
 }
 
 export async function getProducts() {
-    return await query('SELECT id, data FROM product', [])
+    const res = await query('SELECT id, data FROM product', [])
+    return res.map((p: any) => ({...p, data: JSON.parse(p.data)}))
 }
 
 export async function getProduct(id: string) {
     const res = await query('SELECT id, data FROM product WHERE id = ?', [id])
     if (res.length > 0) {
-        return res[0]
+        return {...res[0], data: JSON.parse(res[0].data)}
     } else {
         throw new NotFound('product', id)
     }

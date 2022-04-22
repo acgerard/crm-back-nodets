@@ -17,13 +17,14 @@ export async function createClient(clientData: any) {
 }
 
 export async function getClients() {
-    return await query('SELECT id, data FROM client', [])
+    const res = await query('SELECT id, data FROM client', [])
+    return res.map((p: any) => ({...p, data: JSON.parse(p.data)}))
 }
 
 export async function getClient(id: number) {
     const res = await query('SELECT id, data FROM client WHERE id = ?', [id])
     if (res.length > 0) {
-        return res[0]
+        return {...res[0], data: JSON.parse(res[0].data)}
     } else {
         throw new NotFound('client', id.toString())
     }

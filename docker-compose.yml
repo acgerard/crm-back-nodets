@@ -9,3 +9,12 @@ services:
       MYSQL_DATABASE: crm
       MYSQL_USER: crm_admin
       MYSQL_PASSWORD: password
+  maria-db:
+    image: mariadb:10.3.34
+    ports:
+      - "3308:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: crm
+      MARIADB_USER: crm_admin
+      MARIADB_PASSWORD: password

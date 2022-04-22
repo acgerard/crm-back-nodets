@@ -31,25 +31,27 @@ export async function createSpancoOffer(spancoId: number, data: any): Promise<Sp
 }
 
 export async function getSpancos(): Promise<{id: number; product_id: number; data: any; nb_offers: number}[]> {
-    return await query('SELECT s.id, s.product_id , s.data, count(o.id) as nb_offers FROM spanco s left join offer o on o.spanco_id = s.id GROUP BY s.id ', [])
+    const res = await query('SELECT s.id, s.product_id , s.data, count(o.id) as nb_offers FROM spanco s left join offer o on o.spanco_id = s.id GROUP BY s.id ', [])
+    return res.map((p: any) => ({...p, data: JSON.parse(p.data)}))
 }
 
 export async function getSpanco(id: string) {
     const res = await query('SELECT id, product_id, data FROM spanco WHERE id=?', [id])
     if (res.length > 0) {
-        return res[0]
+        return {...res[0], data: JSON.parse(res[0].data)}
     } else {
         throw new NotFound('spanco', id)
     }
 }
 
 export async function getSpancoOffers(spancoId: string): Promise<{id: number; spanco_id: number; data: any}[]> {
-    return await query('SELECT id, spanco_id, data FROM offer WHERE spanco_id=?', [spancoId])
+    const res = await query('SELECT id, spanco_id, data FROM offer WHERE spanco_id=?', [spancoId])
+    return res.map((p: any) => ({...p, data: JSON.parse(p.data)}))
 }
 export async function getSpancoOffer(spancoId: string, id: string) {
     const res = await query('SELECT id, spanco_id, data FROM offer WHERE spanco_id=? and id=?', [spancoId, id])
     if (res.length > 0) {
-        return res[0]
+        return {...res[0], data: JSON.parse(res[0].data)}
     } else {
         throw new NotFound('offers', id)
     }
