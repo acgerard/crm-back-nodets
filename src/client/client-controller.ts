@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {createClient, deleteClient, getClient, getClients, updateClient} from "./client-repository";
+import {createClient, createClients, deleteClient, getClient, getClients, updateClient} from "./client-repository";
 import {execute, getId} from "../helpers/express-helper";
 
 
@@ -8,6 +8,13 @@ export async function create(req: Request, res: Response, next: NextFunction) {
         const result = await createClient(req.body)
         res.status(201)
         res.send({id: result.id, data: result.data})
+    })
+}
+export async function createBatch(req: Request, res: Response, next: NextFunction) {
+    await execute(next, async () => {
+        const result = await createClients(req.body)
+        res.status(201)
+        res.send(result)
     })
 }
 

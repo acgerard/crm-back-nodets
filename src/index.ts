@@ -5,6 +5,7 @@ import {errorHandler} from "./helpers/error-handler";
 import {basicAuth} from './helpers/basic-auth';
 import {
     create as createClient,
+    createBatch as createClients,
     del as deleteClient,
     get as getClient,
     getAll as getClients,
@@ -33,7 +34,7 @@ import {authenticate, create, resetPassword, update} from "./user/user-controlle
 import {createUser, isUser} from "./user/user-repository";
 
 const app: Application = express()
-app.use(express.json())
+app.use(express.json({limit: '500Kb'}))
 app.use(cors());
 const port: number = 8042
 
@@ -52,6 +53,7 @@ app.put('/crm/users/:email/reset', resetPassword)
 
 // routes CLIENT
 app.post('/crm/clients', createClient)
+app.post('/crm/clients/batch', createClients)
 app.get('/crm/clients', getClients)
 app.get('/crm/clients/:id', getClient)
 app.put('/crm/clients/:id', updateClient)

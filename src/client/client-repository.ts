@@ -15,6 +15,21 @@ export async function createClient(clientData: any) {
         throw Error('Error creating client')
     }
 }
+export async function createClients(clients: any[]) {
+    // check if some firstName/lastName already exists
+    const alreadyExistingClients = await query('select LOWER(JSON_EXTRACT(data, \'$.firstName\')) as firstName, LOWER(JSON_EXTRACT(data, \'$.lastName\')) as lastName from client', []);
+    const alreadyExisting = alreadyExistingClients.map((name: {firstName: string, lastName: string}) => (`${name.firstName}${name.lastName}`.replace(/"/g, '')))
+    const filteredClients = clients.filter(client => !alreadyExisting.includes(`${client.firstName.toLowerCase()}${client.lastName.toLowerCase()}`))
+    if(filteredClients.length > 0) {
+        const res = await query(`INSERT INTO client (data) VALUES ${filteredClients.map(() => '(?)').join(',')}`, filteredClients.map(client => JSON.stringify(client)))
+        if (res.affectedRows > 0) {
+            return {count: res.affectedRows, duplicated: clients.length - filteredClients.length}
+        } else {
+            throw Error('Error creating clients')
+        }
+    }
+    return {count: 0, duplicated: clients.length}
+}
 
 export async function getClients() {
     const res = await query('SELECT id, data FROM client', [])
